@@ -2,14 +2,14 @@ from sqlalchemy.orm import Session
 import models, schemas
 
 def create_user(db: Session, user: schemas.UserCreate):
-    db_user = models.User(**user.dict())
+    db_user = models.User(**user.model_dump())
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
 
 def create_event(db: Session, event: schemas.EventCreate):
-    db_event = models.Event(**event.dict())
+    db_event = models.Event(**event.model_dump())
     db.add(db_event)
     db.commit()
     db.refresh(db_event)

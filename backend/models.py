@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Table, DateTime, Enum, Text
-from sqlalchemy.orm import relationship, declarative_base
+from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declarative_base
 import enum
 
 Base = declarative_base()
@@ -32,7 +33,8 @@ class User(Base):
     name = Column(String, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     phone_number = Column(String, nullable=False)
-    
+    password = Column(String, nullable=False)
+
     is_admin = Column(Boolean, default=False)
     is_banned = Column(Boolean, default=False)
     status = Column(Boolean, default=False)

@@ -1,5 +1,6 @@
 # Root-level ignores
 .env
+
 *.env
 *.log
 .DS_Store
@@ -22,6 +23,9 @@ backend/htmlcov/
 # Virtual environment inside backend
 backend/venv/
 backend/.env
+backend/*.ini 
+
+backend/alembic
 
 # Docker-related
 backend/__pycache__/

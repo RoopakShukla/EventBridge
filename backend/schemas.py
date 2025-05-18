@@ -1,6 +1,9 @@
 from pydantic import BaseModel, EmailStr
 from typing import List, Optional
 from datetime import datetime
+from pydantic import BaseModel, EmailStr
+
+
 
 class EventBase(BaseModel):
     name: str
@@ -21,7 +24,7 @@ class EventCreate(EventBase):
 class Event(EventBase):
     id: int
     class Config:
-        orm_mode = True
+        from_attribute = True
 
 class UserBase(BaseModel):
     name: str
@@ -35,8 +38,27 @@ class User(UserBase):
     id: int
     is_admin: bool
     is_banned: bool
-    status: str
+    status: bool
     events: List[Event] = []
     registered: List[Event] = []
     class Config:
-        orm_mode = True
+        from_attribute = True
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+    
+class UserCreate(UserBase):
+    password: str
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
