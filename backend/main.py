@@ -39,6 +39,10 @@ def read_users(db: Session = Depends(get_db)):
 
 @app.get("/events/", response_model=list[schemas.Event])
 def read_events(db: Session = Depends(get_db)):
+    return crud.get_approved_events(db)
+
+@app.get("/events/all", response_model=list[schemas.Event])
+def read_all_events(db: Session = Depends(get_db)):
     return crud.get_events(db)
 
 @app.post("/signup", response_model=schemas.User)
