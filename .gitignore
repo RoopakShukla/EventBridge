@@ -1,0 +1,60 @@
+# Root-level ignores
+.env
+*.env
+*.log
+.DS_Store
+
+# ─────────────────────────────
+# Backend (FastAPI + Docker)
+# ─────────────────────────────
+
+# Python cache and artifacts
+backend/__pycache__/
+backend/**/*.py[cod]
+backend/*.py[cod]
+backend/.pytest_cache/
+backend/.mypy_cache/
+backend/.ruff_cache/
+backend/.coverage
+backend/coverage.xml
+backend/htmlcov/
+
+# Virtual environment inside backend
+backend/venv/
+backend/.env
+
+# Docker-related
+backend/__pycache__/
+backend/.dockerignore
+backend/*.db
+backend/*.pid
+
+# Editor settings
+backend/.vscode/
+
+# ─────────────────────────────
+# Frontend (Next.js)
+# ─────────────────────────────
+
+# Node modules and Next.js build output
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# Env files (local secrets)
+frontend/.env.local
+frontend/.env.*.local
+
+# Debug log files
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Editor settings
+frontend/.vscode/
+
+# ─────────────────────────────
+# OS-specific
+# ─────────────────────────────
+Thumbs.db
+ehthumbs.db
