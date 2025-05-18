@@ -62,13 +62,30 @@ export const authService = {
     const userStr = localStorage.getItem("user");
     return userStr ? JSON.parse(userStr) : null;
   },
+
+  isAdmin(): boolean {
+    if (!isBrowser) return false;
+    const userStr = localStorage.getItem("user");
+    const is_admin = userStr ? JSON.parse(userStr)?.is_admin : false;
+    return is_admin;
+  },
 };
 
 export const eventsService = {
-  async getEvents(): Promise<any> {
+  async getEvents({ is_admin }: { is_admin: boolean }): Promise<any> {
     try {
-      const response = await axios.get(`${API_URL}/events`);
-      return response.data;
+      if (is_admin) {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(`${API_URL}/events/all`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        return response.data;
+      } else {
+        const response = await axios.get(`${API_URL}/events`);
+        return response.data;
+      }
     } catch (error: any) {
       throw new Error(error.response?.data?.detail || "Failed to fetch events");
     }
