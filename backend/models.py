@@ -8,9 +8,9 @@ Base = declarative_base()
 
 # Event status enum
 class EventStatus(enum.Enum):
-    approved = "Approved"
-    pending = "Pending"
-    rejected = "Rejected"
+    approved = "approved"
+    pending = "pending"
+    rejected = "rejected"
 
 # Association tables
 user_events = Table(

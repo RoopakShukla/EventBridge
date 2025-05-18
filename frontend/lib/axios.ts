@@ -63,3 +63,39 @@ export const authService = {
     return userStr ? JSON.parse(userStr) : null;
   },
 };
+
+export const eventsService = {
+  async getEvents(): Promise<any> {
+    try {
+      const response = await axios.get(`${API_URL}/events`);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || "Failed to fetch events");
+    }
+  },
+
+  async getEventById(id: string): Promise<any> {
+    try {
+      const response = await axios.get(`${API_URL}/events/${id}`);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(
+        error.response?.data?.detail || "Failed to fetch event details"
+      );
+    }
+  },
+
+  async createEvent(data: any): Promise<any> {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(`${API_URL}/events`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || "Failed to create event");
+    }
+  },
+};

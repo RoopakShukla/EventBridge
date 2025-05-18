@@ -28,10 +28,22 @@ const header = () => {
           Community Pulse
         </Link>
         <div className="flex items-center gap-4">
+          {isAuthenticated && (
+            <Link
+              href="/event/add"
+              className="px-4 py-2 border rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 transition-al"
+            >
+              Add Event
+            </Link>
+          )}
           <ThemeToggle />
           <div className="space-x-2">
             {isAuthenticated ? (
-              <Button onClick={handleLogout} variant="outline">
+              <Button
+                onClick={handleLogout}
+                variant="outline"
+                className="cursor-pointer"
+              >
                 <User className="w-6 h-6 text-gray-800 dark:text-gray-200" />
               </Button>
             ) : (

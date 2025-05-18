@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Eye, EyeOff, Lock, User } from "lucide-react";
 
@@ -21,6 +21,18 @@ interface LoginFormValues {
 const Login = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    setIsAuthenticated(authService.isAuthenticated());
+  }, [authService.isAuthenticated()]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      toast.info("You are already logged in");
+      router.push("/");
+    }
+  }, [isAuthenticated, router]);
 
   const {
     register,
