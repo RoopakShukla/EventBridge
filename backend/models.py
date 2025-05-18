@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Table, DateTime, Enum, Text, ARRAY
+from datetime import datetime , timezone
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 import enum
@@ -62,3 +63,14 @@ class Event(Base):
     
     creators = relationship("User", secondary=user_events, back_populates="events")
     attendees = relationship("User", secondary=registered_events, back_populates="registered")
+
+
+class AuditLog(Base):
+    __tablename__ = "audit_logs"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    action = Column(String, nullable=False)
+    timestamp = Column(DateTime, default=datetime.now(tz=timezone.utc))
+    details = Column(Text)
+
+    user = relationship("User")

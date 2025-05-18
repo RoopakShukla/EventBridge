@@ -13,7 +13,7 @@ class EventBase(BaseModel):
     end_datetime: datetime
     registration_start_datetime: datetime
     registration_end_datetime: datetime
-    photos: Optional[str]
+    photos: Optional[List[str]]
     category: Optional[str]
     status: Optional[str] = "Pending"
     flag: Optional[bool] = False

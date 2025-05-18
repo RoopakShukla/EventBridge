@@ -68,3 +68,56 @@ def delete_event(
     if not success:
         raise HTTPException(status_code=404, detail="Event not found or not authorized")
     return {"ok": True}
+
+@app.get("/events/{event_id}/registered")
+def get_registered_users(event_id: int, db: Session = Depends(get_db)):
+    event = db.query(models.Event).filter(models.Event.id == event_id).first()
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    return event.attendees
+
+
+@app.post("/admin/ban/{user_id}")
+def ban_user(user_id: int, db: Session = Depends(get_db), admin: models.User = Depends(get_current_admin)):
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    user.is_banned = True
+    db.commit()
+    return {"message": "User banned"}
+
+@app.post("/admin/events/{event_id}/approve")
+def approve_event(event_id: int, db: Session = Depends(get_db), admin: models.User = Depends(get_current_admin)):
+    event = db.query(models.Event).filter(models.Event.id == event_id).first()
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    event.status = "approved"
+    db.commit()
+    return {"message": "Event approved"}
+
+@app.post("/admin/events/{event_id}/reject")
+def reject_event(event_id: int, db: Session = Depends(get_db), admin: models.User = Depends(get_current_admin)):
+    event = db.query(models.Event).filter(models.Event.id == event_id).first()
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    event.status = "rejected"
+    db.commit()
+    return {"message": "Event rejected"}
+
+@app.post("/events/{event_id}/register")
+def register_for_event(event_id: int, current_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
+    event = db.query(models.Event).filter(models.Event.id == event_id).first()
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    event.attendees.append(current_user)
+    db.commit()
+    return {"message": "Registered"}
+
+@app.post("/events/{event_id}/unregister")
+def unregister_for_event(event_id: int, current_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
+    event = db.query(models.Event).filter(models.Event.id == event_id).first()
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    event.attendees.remove(current_user)
+    db.commit()
+    return {"message": "Unregistered"}

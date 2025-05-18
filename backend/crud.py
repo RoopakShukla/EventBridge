@@ -46,3 +46,11 @@ def delete_event(db: Session, event_id: int, user_id: int):
     db.delete(event)
     db.commit()
     return True
+
+
+def log_action(db: Session, user_id: int, action: str, details: str = ""):
+    from models import AuditLog
+    log = AuditLog(user_id=user_id, action=action, details=details)
+    db.add(log)
+    db.commit()
+    
