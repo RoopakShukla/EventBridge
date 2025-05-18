@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends , HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 import models, schemas, crud
 from database import engine, get_db
@@ -9,6 +10,23 @@ from datetime import timedelta
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:3000",
+    "https://your-frontend-domain.com",
+    "http://localhost:8000",
+    "http://localhost:8080",
+    "http://localhost",
+    
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.post("/events/", response_model=schemas.Event)
 def create_event(event: schemas.EventCreate, db: Session = Depends(get_db)):
