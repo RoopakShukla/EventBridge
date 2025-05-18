@@ -159,4 +159,24 @@ export const eventsService = {
       throw new Error(error.response?.data?.detail || "Failed to reject event");
     }
   },
+
+  async registerForEvent(id: string): Promise<any> {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        `${API_URL}/events/${id}/register`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error: any) {
+      throw new Error(
+        error.response?.data?.detail || "Failed to register for event"
+      );
+    }
+  },
 };

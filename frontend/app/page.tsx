@@ -5,8 +5,9 @@ import { authService, eventsService } from "@/lib/axios";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { format, parseISO } from "date-fns";
-import { Locate, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Home() {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
@@ -99,28 +100,52 @@ export default function Home() {
                 </div>
                 <div className="flex flex-col gap-4">
                   <div className="flex flex-col gap-2">
-                    <h2 className="text-xl font-semibold">{event.name}</h2>
+                    <Link href={`/event/${event.id}`}>
+                      <h2 className="text-xl font-semibold hover:underline underline-offset-1">
+                        {event.name}
+                      </h2>
+                    </Link>
                     <p className="text-gray-600 dark:text-gray-300">
                       {event.description}
                     </p>
                   </div>
                   {isAdmin ? (
                     <div className="flex gap-2">
-                      <Button
-                        onClick={() => handleApprove(event.id)}
-                        className="flex-1 bg-green-500 hover:bg-green-600"
-                        size="sm"
-                      >
-                        Approve
-                      </Button>
-                      <Button
-                        onClick={() => handleReject(event.id)}
-                        variant="destructive"
-                        className="flex-1"
-                        size="sm"
-                      >
-                        Reject
-                      </Button>
+                      {event.status === "approved" ? (
+                        <Button
+                          className="flex-1 bg-green-500 hover:bg-green-600"
+                          size="sm"
+                          disabled
+                        >
+                          Approved
+                        </Button>
+                      ) : event.status === "rejected" ? (
+                        <Button
+                          className="flex-1 bg-red-500 hover:bg-red-600"
+                          size="sm"
+                          disabled
+                        >
+                          Rejected
+                        </Button>
+                      ) : (
+                        <>
+                          <Button
+                            onClick={() => handleApprove(event.id)}
+                            className="flex-1 bg-green-500 hover:bg-green-600"
+                            size="sm"
+                          >
+                            Approve
+                          </Button>
+                          <Button
+                            onClick={() => handleReject(event.id)}
+                            variant="destructive"
+                            className="flex-1"
+                            size="sm"
+                          >
+                            Reject
+                          </Button>
+                        </>
+                      )}
                     </div>
                   ) : (
                     <p className="flex flex-row gap-1 text-sm text-gray-600 dark:text-gray-300">

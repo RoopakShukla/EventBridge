@@ -83,7 +83,7 @@ def read_user_events(user_id: int, db: Session = Depends(get_db)):
 
 @app.get("/events/{event_id}/", response_model=schemas.Event)
 def read_event(event_id: int, db: Session = Depends(get_db)):
-    event = crud.get_approved_events(db).filter(models.Event.id == event_id).first()
+    event = db.query(models.Event).filter(models.Event.status == "approved").filter(models.Event.id == event_id).first()
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")
     return event
