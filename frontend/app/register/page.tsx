@@ -51,7 +51,7 @@ const Register = () => {
 
       router.push("/");
     } catch (error: any) {
-      toast.error("Registration failed");
+      toast.error("Registration failed", { description: error.message });
     }
   };
 
@@ -193,7 +193,7 @@ const Register = () => {
               Already have an account?{" "}
               <Link
                 href="/login"
-                className="text-brand-blue font-medium hover:underline"
+                className="text-blue-400 font-medium hover:underline"
               >
                 Login
               </Link>

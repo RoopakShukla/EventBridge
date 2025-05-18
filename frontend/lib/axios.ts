@@ -3,6 +3,8 @@ import { SignUpData, LoginData, User, AuthResponse } from "@/lib/types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
+const isBrowser = typeof window !== "undefined";
+
 export const authService = {
   async signup(data: SignUpData): Promise<User> {
     try {
@@ -44,15 +46,19 @@ export const authService = {
   },
 
   logout(): void {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    if (isBrowser) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+    }
   },
 
   isAuthenticated(): boolean {
+    if (!isBrowser) return false;
     return !!localStorage.getItem("token");
   },
 
   getStoredUser(): User | null {
+    if (!isBrowser) return null;
     const userStr = localStorage.getItem("user");
     return userStr ? JSON.parse(userStr) : null;
   },
