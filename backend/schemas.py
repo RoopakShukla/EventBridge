@@ -27,7 +27,7 @@ class Event(EventBase):
         from_attribute = True
 
 class UserBase(BaseModel):
-    name: str
+    username: str
     email: EmailStr
     phone_number: str
 
@@ -45,7 +45,7 @@ class User(UserBase):
         from_attribute = True
 
 class UserLogin(BaseModel):
-    email: EmailStr
+    username: str
     password: str
 
 class Token(BaseModel):
@@ -56,7 +56,7 @@ class UserCreate(UserBase):
     password: str
 
 class LoginRequest(BaseModel):
-    email: EmailStr
+    username: str
     password: str
 
 class Token(BaseModel):

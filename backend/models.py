@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Table, DateTime, Enum, Text
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Table, DateTime, Enum, Text, ARRAY
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 import enum
@@ -30,7 +30,7 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
+    username = Column(String, index=True ,nullable=False , unique=True)
     email = Column(String, unique=True, index=True, nullable=False)
     phone_number = Column(String, nullable=False)
     password = Column(String, nullable=False)
@@ -55,7 +55,7 @@ class Event(Base):
     registration_start_datetime = Column(DateTime)
     registration_end_datetime = Column(DateTime)
     
-    photos = Column(String)  # could be comma-separated URLs or use a separate table
+    photos = Column(ARRAY(String)) 
     category = Column(String)
     status = Column(Enum(EventStatus), default=EventStatus.pending)
     flag = Column(Boolean, default=False)
