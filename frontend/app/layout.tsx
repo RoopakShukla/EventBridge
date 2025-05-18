@@ -40,7 +40,7 @@ export default function RootLayout({
               <div className="flex items-center gap-4">
                 <ThemeToggle />
                 <div className="space-x-2">
-                  <Link
+                  <Link 
                     href="/login"
                     className="px-4 py-2 border rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 transition-all"
                   >
