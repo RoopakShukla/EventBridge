@@ -23,18 +23,6 @@ interface RegisterFormValues {
 const Register = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    setIsAuthenticated(authService.isAuthenticated());
-  }, [authService.isAuthenticated()]);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      toast.info("You are already logged in");
-      router.push("/");
-    }
-  }, [isAuthenticated, router]);
 
   const {
     register,

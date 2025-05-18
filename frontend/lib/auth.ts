@@ -12,7 +12,7 @@ export function useAuth() {
     setError(null);
     try {
       await authService.signup(data);
-      // After signup, login the user
+      
       await authService.login({
         username: data.username,
         password: data.password,

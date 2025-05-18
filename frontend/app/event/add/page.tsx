@@ -86,7 +86,7 @@ export default function EventForm() {
       toast.dismiss(loadingToast);
       toast.success("Event created successfully!");
 
-      /* router.push("/events"); */
+      router.push("/events");
     } catch (error: any) {
       toast.error("Failed to create event", {
         description: error.message || "Please try again later",

@@ -81,6 +81,13 @@ def admin_area(current_admin: models.User = Depends(get_current_admin)):
 def read_user_events(user_id: int, db: Session = Depends(get_db)):
     return crud.get_events_by_user(db, user_id)
 
+@app.get("/events/{event_id}/", response_model=schemas.Event)
+def read_event(event_id: int, db: Session = Depends(get_db)):
+    event = crud.get_approved_events(db).filter(models.Event.id == event_id).first()
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    return event
+
 @app.delete("/events/{event_id}/")
 def delete_event(
     event_id: int,

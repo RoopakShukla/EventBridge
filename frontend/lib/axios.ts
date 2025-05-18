@@ -72,22 +72,28 @@ export const authService = {
 };
 
 export const eventsService = {
-  async getEvents({ is_admin }: { is_admin: boolean }): Promise<any> {
+  async getEvents(): Promise<any> {
     try {
-      if (is_admin) {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(`${API_URL}/events/all`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        return response.data;
-      } else {
-        const response = await axios.get(`${API_URL}/events`);
-        return response.data;
-      }
+      const response = await axios.get(`${API_URL}/events`);
+      return response.data;
     } catch (error: any) {
       throw new Error(error.response?.data?.detail || "Failed to fetch events");
+    }
+  },
+
+  async getAdminEvents(): Promise<any> {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(`${API_URL}/events/all`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(
+        error.response?.data?.detail || "Failed to fetch admin events"
+      );
     }
   },
 
@@ -113,6 +119,44 @@ export const eventsService = {
       return response.data;
     } catch (error: any) {
       throw new Error(error.response?.data?.detail || "Failed to create event");
+    }
+  },
+
+  async approveEvent(id: string): Promise<any> {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        `${API_URL}/admin/events/${id}/approve`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error: any) {
+      throw new Error(
+        error.response?.data?.detail || "Failed to approve event"
+      );
+    }
+  },
+
+  async rejectEvent(id: string): Promise<any> {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        `${API_URL}/admin/events/${id}/reject`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || "Failed to reject event");
     }
   },
 };
