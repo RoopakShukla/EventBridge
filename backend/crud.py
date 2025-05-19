@@ -22,7 +22,7 @@ def get_events(db: Session):
     return db.query(models.Event).all()
 
 def get_approved_events(db: Session):
-    return db.query(models.Event).filter(models.Event.status == "approved").all()
+    return db.query(models.Event).filter(models.Event.status == "approved").filter(models.Event.flag == False).all()
 
 def get_events_by_user(db: Session, user_id: int):
     return db.query(models.Event).join(models.Event.creators).filter(models.User.id == user_id).all()

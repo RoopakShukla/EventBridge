@@ -38,17 +38,13 @@ type EventFormData = {
 
 export default function EventForm() {
   const router = useRouter();
-  const [startDate, setStartDate] = useState<Date | undefined>(
-    new Date("2025-08-14T13:30:00")
-  );
-  const [endDate, setEndDate] = useState<Date | undefined>(
-    new Date("2025-08-14T17:30:00")
-  );
+  const [startDate, setStartDate] = useState<Date | undefined>(new Date());
+  const [endDate, setEndDate] = useState<Date | undefined>(new Date());
   const [registrationStart, setRegistrationStart] = useState<Date | undefined>(
-    new Date("2025-06-04T07:00:00")
+    new Date()
   );
   const [registrationEnd, setRegistrationEnd] = useState<Date | undefined>(
-    new Date("2025-08-01T23:30:00")
+    new Date()
   );
 
   const {
@@ -86,7 +82,7 @@ export default function EventForm() {
       toast.dismiss(loadingToast);
       toast.success("Event created successfully!");
 
-      router.push("/events");
+      router.push("/");
     } catch (error: any) {
       toast.error("Failed to create event", {
         description: error.message || "Please try again later",
@@ -111,6 +107,7 @@ export default function EventForm() {
               <Input
                 id="eventName"
                 className="border-input bg-background text-foreground"
+                placeholder="Garage sale..."
                 {...register("eventName", {
                   required: "Event name is required",
                 })}
@@ -130,6 +127,7 @@ export default function EventForm() {
               <Input
                 id="location"
                 className="border-input bg-background text-foreground"
+                placeholder="123 Main St, City..."
                 {...register("location", { required: "Location is required" })}
               />
               {errors.location && (
@@ -150,6 +148,7 @@ export default function EventForm() {
               <Textarea
                 id="description"
                 className="min-h-[100px] border-input bg-background text-foreground"
+                placeholder="A brief description of the event..."
                 {...register("description", {
                   required: "Description is required",
                 })}

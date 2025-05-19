@@ -22,21 +22,52 @@ const initialState: ThemeProviderState = {
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
+// Add this function to handle initial theme setup
+const getInitialTheme = (storageKey: string, defaultTheme: Theme): Theme => {
+  if (typeof window === "undefined") return defaultTheme;
+
+  try {
+    const storedTheme = window.localStorage.getItem(storageKey) as Theme;
+    if (storedTheme) return storedTheme;
+
+    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+      .matches
+      ? "dark"
+      : "light";
+    return systemTheme;
+  } catch {
+    return defaultTheme;
+  }
+};
+
 export function ThemeProvider({
   children,
   defaultTheme = "system",
   storageKey = "ui-theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window !== "undefined") {
-      return (localStorage.getItem(storageKey) as Theme) || defaultTheme;
-    }
-    return defaultTheme;
-  });
-  
+  const [theme, setTheme] = useState<Theme>(() =>
+    getInitialTheme(storageKey, defaultTheme)
+  );
+
+  // Add this effect to handle system theme changes
   useEffect(() => {
-    const root = window.document.documentElement;
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleChange = () => {
+      if (theme === "system") {
+        const systemTheme = mediaQuery.matches ? "dark" : "light";
+        document.documentElement.classList.remove("light", "dark");
+        document.documentElement.classList.add(systemTheme);
+      }
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, [theme]);
+
+  // Move theme application to a separate effect that runs once
+  useEffect(() => {
+    const root = document.documentElement;
     root.classList.remove("light", "dark");
 
     if (theme === "system") {
@@ -44,19 +75,17 @@ export function ThemeProvider({
         .matches
         ? "dark"
         : "light";
-
       root.classList.add(systemTheme);
-      return;
+    } else {
+      root.classList.add(theme);
     }
-
-    root.classList.add(theme);
   }, [theme]);
 
   const value = {
     theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme);
-      setTheme(theme);
+    setTheme: (newTheme: Theme) => {
+      localStorage.setItem(storageKey, newTheme);
+      setTheme(newTheme);
     },
   };
 

@@ -69,7 +69,7 @@ def login(form_data: schemas.LoginRequest, db: Session = Depends(get_db)):
     token = create_access_token(data={"sub": str(user.id)}, expires_delta=timedelta(minutes=30))
     return {"access_token": token, "token_type": "bearer"}
 
-@app.get("/me", response_model=schemas.User)
+@app.get("/me", response_model=schemas.UserActual)
 def read_users_me(current_user: models.User = Depends(get_current_user)):
     return current_user
 
