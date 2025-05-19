@@ -17,9 +17,13 @@ export default function Home() {
   const fetchEvents = async () => {
     try {
       setIsLoading(true);
-      const isAuthenticated = authService.isAuthenticated();
-      const isAdminUser = isAuthenticated && authService.isAdmin();
-      setIsAdmin(isAdminUser);
+      const isAuthenticated = await authService.isAuthenticated();
+      let isAdminUser = false;
+
+      if (isAuthenticated) {
+        isAdminUser = await authService.isAdmin();
+        setIsAdmin(isAdminUser);
+      }
 
       const response = isAdminUser
         ? await eventsService.getAdminEvents()

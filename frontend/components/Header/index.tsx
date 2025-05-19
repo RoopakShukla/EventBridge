@@ -8,16 +8,21 @@ import { User } from "lucide-react";
 import { Button } from "../ui/button";
 import { usePathname } from "next/navigation";
 
-const header = () => {
+const Header = () => {
   const pathname = usePathname();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    setIsAuthenticated(authService.isAuthenticated());
-  }, [authService.isAuthenticated()]);
+    const checkAuth = async () => {
+      const isAuth = await authService.isAuthenticated();
+      setIsAuthenticated(isAuth);
+    };
 
-  const handleLogout = () => {
-    authService.logout();
+    checkAuth();
+  }, [authService.isAuthenticated]);
+
+  const handleLogout = async () => {
+    await authService.logout();
     setIsAuthenticated(false);
   };
 
@@ -80,4 +85,4 @@ const header = () => {
   );
 };
 
-export default header;
+export default Header;

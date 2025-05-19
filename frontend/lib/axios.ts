@@ -1,9 +1,16 @@
 import axios from "axios";
+import localforage from "localforage";
 import { SignUpData, LoginData, User, AuthResponse } from "@/lib/types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const isBrowser = typeof window !== "undefined";
+
+// Initialize localforage
+localforage.config({
+  name: 'community-pulse',
+  storeName: 'auth_store'
+});
 
 export const authService = {
   async signup(data: SignUpData): Promise<User> {
@@ -20,10 +27,10 @@ export const authService = {
       const response = await axios.post<AuthResponse>(`${API_URL}/login/`, data);
       const { access_token, token_type } = response.data;
 
-      localStorage.setItem("token", access_token);
+      await localforage.setItem("token", access_token);
 
       const user = await this.getCurrentUser();
-      localStorage.setItem("user", JSON.stringify(user));
+      await localforage.setItem("user", user);
     } catch (error: any) {
       throw new Error(error.response?.data?.detail || "Login failed");
     }
@@ -31,7 +38,7 @@ export const authService = {
 
   async getCurrentUser(): Promise<User> {
     try {
-      const token = localStorage.getItem("token");
+      const token = await localforage.getItem<string>("token");
       const response = await axios.get<User>(`${API_URL}/me/`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -39,35 +46,32 @@ export const authService = {
       });
       return response.data;
     } catch (error: any) {
-      throw new Error(
-        error.response?.data?.detail || "Failed to get user data"
-      );
+      throw new Error(error.response?.data?.detail || "Failed to get user data");
     }
   },
 
-  logout(): void {
+  async logout(): Promise<void> {
     if (isBrowser) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
+      await localforage.removeItem("token");
+      await localforage.removeItem("user");
     }
   },
 
-  isAuthenticated(): boolean {
+  async isAuthenticated(): Promise<boolean> {
     if (!isBrowser) return false;
-    return !!localStorage.getItem("token");
+    const token = await localforage.getItem<string>("token");
+    return !!token;
   },
 
-  getStoredUser(): User | null {
+  async getStoredUser(): Promise<User | null> {
     if (!isBrowser) return null;
-    const userStr = localStorage.getItem("user");
-    return userStr ? JSON.parse(userStr) : null;
+    return await localforage.getItem<User>("user");
   },
 
-  isAdmin(): boolean {
+  async isAdmin(): Promise<boolean> {
     if (!isBrowser) return false;
-    const userStr = localStorage.getItem("user");
-    const is_admin = userStr ? JSON.parse(userStr)?.is_admin : false;
-    return is_admin;
+    const user = await localforage.getItem<User>("user");
+    return !!user?.is_admin;
   },
 };
 
@@ -83,7 +87,7 @@ export const eventsService = {
 
   async getAdminEvents(): Promise<any> {
     try {
-      const token = localStorage.getItem("token");
+      const token = await localforage.getItem<string>("token");
       const response = await axios.get(`${API_URL}/events/all/`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -91,9 +95,7 @@ export const eventsService = {
       });
       return response.data;
     } catch (error: any) {
-      throw new Error(
-        error.response?.data?.detail || "Failed to fetch admin events"
-      );
+      throw new Error(error.response?.data?.detail || "Failed to fetch admin events");
     }
   },
 
@@ -110,7 +112,7 @@ export const eventsService = {
 
   async createEvent(data: any): Promise<any> {
     try {
-      const token = localStorage.getItem("token");
+      const token = await localforage.getItem<string>("token");
       const response = await axios.post(`${API_URL}/events/`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -124,7 +126,7 @@ export const eventsService = {
 
   async approveEvent(id: string): Promise<any> {
     try {
-      const token = localStorage.getItem("token");
+      const token = await localforage.getItem<string>("token");
       const response = await axios.post(
         `${API_URL}/admin/events/${id}/approve/`,
         {},
@@ -144,7 +146,7 @@ export const eventsService = {
 
   async rejectEvent(id: string): Promise<any> {
     try {
-      const token = localStorage.getItem("token");
+      const token = await localforage.getItem<string>("token");
       const response = await axios.post(
         `${API_URL}/admin/events/${id}/reject/`,
         {},
@@ -162,7 +164,7 @@ export const eventsService = {
 
   async registerForEvent(id: string): Promise<any> {
     try {
-      const token = localStorage.getItem("token");
+      const token = await localforage.getItem<string>("token");
       const response = await axios.post(
         `${API_URL}/events/${id}/register/`,
         {},

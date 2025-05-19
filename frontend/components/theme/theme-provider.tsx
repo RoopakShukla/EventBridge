@@ -43,7 +43,7 @@ const getInitialTheme = (storageKey: string, defaultTheme: Theme): Theme => {
 export function ThemeProvider({
   children,
   defaultTheme = "system",
-  storageKey = "ui-theme",
+  storageKey = "community-pulse-theme",
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(() =>
