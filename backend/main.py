@@ -41,11 +41,11 @@ def read_users(db: Session = Depends(get_db)):
 def read_events(db: Session = Depends(get_db)):
     return crud.get_approved_events(db)
 
-@app.get("/events/all", response_model=list[schemas.Event])
+@app.get("/events/all/", response_model=list[schemas.Event])
 def read_all_events(db: Session = Depends(get_db)):
     return crud.get_events(db)
 
-@app.post("/signup", response_model=schemas.User)
+@app.post("/signup/", response_model=schemas.User)
 def signup(user: schemas.UserCreate, db: Session = Depends(get_db)):
     existing = db.query(models.User).filter(models.User.username == user.username).first()
     existing_email = db.query(models.User).filter(models.User.email == user.email).first()
@@ -61,7 +61,7 @@ def signup(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db.refresh(db_user)
     return db_user
 
-@app.post("/login", response_model=schemas.Token)
+@app.post("/login/", response_model=schemas.Token)
 def login(form_data: schemas.LoginRequest, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.username == form_data.username).first()
     if not user or not verify_password(form_data.password, user.password):
@@ -69,11 +69,11 @@ def login(form_data: schemas.LoginRequest, db: Session = Depends(get_db)):
     token = create_access_token(data={"sub": str(user.id)}, expires_delta=timedelta(minutes=30))
     return {"access_token": token, "token_type": "bearer"}
 
-@app.get("/me", response_model=schemas.User)
+@app.get("/me/", response_model=schemas.User)
 def read_users_me(current_user: models.User = Depends(get_current_user)):
     return current_user
 
-@app.get("/admin-only")
+@app.get("/admin-only/")
 def admin_area(current_admin: models.User = Depends(get_current_admin)):
     return {"message": f"Welcome admin {current_admin.name}!"}
 
@@ -96,10 +96,10 @@ def delete_event(
 ):
     success = crud.delete_event(db, event_id, current_user.id)
     if not success:
-        raise HTTPException(status_code=404, detail="Event not found or not authorized")
+        raise HTTPException(status_code=404, detail="Event not found")
     return {"ok": True}
 
-@app.get("/events/{event_id}/registered")
+@app.get("/events/{event_id}/registered/")
 def get_registered_users(event_id: int, db: Session = Depends(get_db)):
     event = db.query(models.Event).filter(models.Event.id == event_id).first()
     if not event:
@@ -107,7 +107,7 @@ def get_registered_users(event_id: int, db: Session = Depends(get_db)):
     return event.attendees
 
 
-@app.post("/admin/ban/{user_id}")
+@app.post("/admin/ban/{user_id}/")
 def ban_user(user_id: int, db: Session = Depends(get_db), admin: models.User = Depends(get_current_admin)):
     user = db.query(models.User).filter(models.User.id == user_id).first()
     if not user:
@@ -116,7 +116,7 @@ def ban_user(user_id: int, db: Session = Depends(get_db), admin: models.User = D
     db.commit()
     return {"message": "User banned"}
 
-@app.post("/admin/events/{event_id}/approve")
+@app.post("/admin/events/{event_id}/approve/")
 def approve_event(event_id: int, db: Session = Depends(get_db), admin: models.User = Depends(get_current_admin)):
     event = db.query(models.Event).filter(models.Event.id == event_id).first()
     if not event:
@@ -125,7 +125,7 @@ def approve_event(event_id: int, db: Session = Depends(get_db), admin: models.Us
     db.commit()
     return {"message": "Event approved"}
 
-@app.post("/admin/events/{event_id}/reject")
+@app.post("/admin/events/{event_id}/reject/")
 def reject_event(event_id: int, db: Session = Depends(get_db), admin: models.User = Depends(get_current_admin)):
     event = db.query(models.Event).filter(models.Event.id == event_id).first()
     if not event:
@@ -134,7 +134,7 @@ def reject_event(event_id: int, db: Session = Depends(get_db), admin: models.Use
     db.commit()
     return {"message": "Event rejected"}
 
-@app.post("/events/{event_id}/register")
+@app.post("/events/{event_id}/register/")
 def register_for_event(event_id: int, current_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
     event = db.query(models.Event).filter(models.Event.id == event_id).first()
     if not event:
@@ -143,7 +143,7 @@ def register_for_event(event_id: int, current_user: models.User = Depends(get_cu
     db.commit()
     return {"message": "Registered"}
 
-@app.post("/events/{event_id}/unregister")
+@app.post("/events/{event_id}/unregister/")
 def unregister_for_event(event_id: int, current_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
     event = db.query(models.Event).filter(models.Event.id == event_id).first()
     if not event:

@@ -39,10 +39,15 @@ const Register = () => {
 
   const onSubmit = async (data: RegisterFormValues) => {
     try {
-      await authService.signup(data);
+      await authService.signup({
+        username: data.username.trim(),
+        email: data.email.trim(),
+        phone_number: data.phone_number.trim(),
+        password: data.password.trim(),
+      });
       await authService.login({
-        username: data.username,
-        password: data.password,
+        username: data.username.trim(),
+        password: data.password.trim(),
       });
 
       toast.success("Account created successfully!", {
@@ -141,8 +146,9 @@ const Register = () => {
                   {...register("phone_number", {
                     required: "Phone number is required",
                     pattern: {
-                      value: /^\d{10}$/,
-                      message: "Phone number must be 10 digits",
+                      value:
+                        /^((\+\d{1,3}(-| )?\(?\d\)?(-| )?\d{1,5})|(\(?\d{2,6}\)?))(-| )?(\d{3,4})(-| )?(\d{4})(( x| ext)\d{1,5}){0,1}$/,
+                      message: "Invalid phone number",
                     },
                   })}
                 />

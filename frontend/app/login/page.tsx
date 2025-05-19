@@ -35,7 +35,10 @@ const Login = () => {
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      await authService.login(data);
+      await authService.login({
+        username: data.username.trim(),
+        password: data.password.trim(),
+      });
 
       toast.success("Login successful!", {
         description: "Welcome back!",

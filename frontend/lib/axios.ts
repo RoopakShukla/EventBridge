@@ -8,7 +8,7 @@ const isBrowser = typeof window !== "undefined";
 export const authService = {
   async signup(data: SignUpData): Promise<User> {
     try {
-      const response = await axios.post<User>(`${API_URL}/signup`, data);
+      const response = await axios.post<User>(`${API_URL}/signup/`, data);
       return response.data;
     } catch (error: any) {
       throw new Error(error.response?.data?.detail || "Signup failed");
@@ -17,7 +17,7 @@ export const authService = {
 
   async login(data: LoginData): Promise<void> {
     try {
-      const response = await axios.post<AuthResponse>(`${API_URL}/login`, data);
+      const response = await axios.post<AuthResponse>(`${API_URL}/login/`, data);
       const { access_token, token_type } = response.data;
 
       localStorage.setItem("token", access_token);
@@ -32,7 +32,7 @@ export const authService = {
   async getCurrentUser(): Promise<User> {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get<User>(`${API_URL}/me`, {
+      const response = await axios.get<User>(`${API_URL}/me/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -74,7 +74,7 @@ export const authService = {
 export const eventsService = {
   async getEvents(): Promise<any> {
     try {
-      const response = await axios.get(`${API_URL}/events`);
+      const response = await axios.get(`${API_URL}/events/`);
       return response.data;
     } catch (error: any) {
       throw new Error(error.response?.data?.detail || "Failed to fetch events");
@@ -84,7 +84,7 @@ export const eventsService = {
   async getAdminEvents(): Promise<any> {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(`${API_URL}/events/all`, {
+      const response = await axios.get(`${API_URL}/events/all/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -99,7 +99,7 @@ export const eventsService = {
 
   async getEventById(id: string): Promise<any> {
     try {
-      const response = await axios.get(`${API_URL}/events/${id}`);
+      const response = await axios.get(`${API_URL}/events/${id}/`);
       return response.data;
     } catch (error: any) {
       throw new Error(
@@ -111,7 +111,7 @@ export const eventsService = {
   async createEvent(data: any): Promise<any> {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.post(`${API_URL}/events`, data, {
+      const response = await axios.post(`${API_URL}/events/`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -126,7 +126,7 @@ export const eventsService = {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.post(
-        `${API_URL}/admin/events/${id}/approve`,
+        `${API_URL}/admin/events/${id}/approve/`,
         {},
         {
           headers: {
@@ -146,7 +146,7 @@ export const eventsService = {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.post(
-        `${API_URL}/admin/events/${id}/reject`,
+        `${API_URL}/admin/events/${id}/reject/`,
         {},
         {
           headers: {
@@ -164,7 +164,7 @@ export const eventsService = {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.post(
-        `${API_URL}/events/${id}/register`,
+        `${API_URL}/events/${id}/register/`,
         {},
         {
           headers: {
