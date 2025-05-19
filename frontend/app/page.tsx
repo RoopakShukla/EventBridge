@@ -5,7 +5,7 @@ import { authService, eventsService } from "@/lib/axios";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { format, parseISO } from "date-fns";
-import { MapPin } from "lucide-react";
+import { MapPin, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -68,6 +68,12 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
       <main className="flex-grow flex p-8 bg-gray-50 dark:bg-gray-900">
+        <div className="fixed bottom-4 right-4">
+          <Button variant={"outline"}>
+            <Plus />
+            Add Event
+          </Button>
+        </div>
         {/* <div className="text-center space-y-4 max-w-md">
           <h1 className="text-4xl font-bold">Welcome to Community Pulse</h1>
           <p className="text-xl text-gray-600 dark:text-gray-300">

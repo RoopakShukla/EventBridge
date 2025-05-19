@@ -1,6 +1,9 @@
 from pydantic import BaseModel, EmailStr
 from typing import List, Optional
 from datetime import datetime
+from pydantic import BaseModel, EmailStr
+
+
 
 class EventBase(BaseModel):
     name: str
@@ -27,9 +30,6 @@ class UserBase(BaseModel):
     username: str
     email: EmailStr
     phone_number: str
-
-class UserActual(UserBase):
-    id: int
 
 class UserCreate(UserBase):
     pass
