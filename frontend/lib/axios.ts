@@ -8,8 +8,8 @@ const isBrowser = typeof window !== "undefined";
 
 // Initialize localforage
 localforage.config({
-  name: 'community-pulse',
-  storeName: 'auth_store'
+  name: "community-pulse",
+  storeName: "auth_store",
 });
 
 export const authService = {
@@ -24,7 +24,10 @@ export const authService = {
 
   async login(data: LoginData): Promise<void> {
     try {
-      const response = await axios.post<AuthResponse>(`${API_URL}/login/`, data);
+      const response = await axios.post<AuthResponse>(
+        `${API_URL}/login/`,
+        data
+      );
       const { access_token, token_type } = response.data;
 
       await localforage.setItem("token", access_token);
@@ -46,7 +49,9 @@ export const authService = {
       });
       return response.data;
     } catch (error: any) {
-      throw new Error(error.response?.data?.detail || "Failed to get user data");
+      throw new Error(
+        error.response?.data?.detail || "Failed to get user data"
+      );
     }
   },
 
@@ -95,7 +100,9 @@ export const eventsService = {
       });
       return response.data;
     } catch (error: any) {
-      throw new Error(error.response?.data?.detail || "Failed to fetch admin events");
+      throw new Error(
+        error.response?.data?.detail || "Failed to fetch admin events"
+      );
     }
   },
 
@@ -179,6 +186,42 @@ export const eventsService = {
       throw new Error(
         error.response?.data?.detail || "Failed to register for event"
       );
+    }
+  },
+
+  async flagEvent(id: string): Promise<any> {
+    try {
+      const token = await localforage.getItem<string>("token");
+      const response = await axios.post(
+        `${API_URL}/admin/events/${id}/flag/`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || "Failed to flag event");
+    }
+  },
+
+  async unflagEvent(id: string): Promise<any> {
+    try {
+      const token = await localforage.getItem<string>("token");
+      const response = await axios.post(
+        `${API_URL}/admin/events/${id}/unflag/`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || "Failed to unflag event");
     }
   },
 };

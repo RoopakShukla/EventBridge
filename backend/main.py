@@ -6,10 +6,13 @@ from database import engine, get_db
 from auth import hash_password, verify_password, create_access_token, get_current_user, get_current_admin
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
+from admin import setup_admin
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+setup_admin(app)
 
 origins = [
     "http://localhost:3000",
@@ -151,3 +154,21 @@ def unregister_for_event(event_id: int, current_user: models.User = Depends(get_
     event.attendees.remove(current_user)
     db.commit()
     return {"message": "Unregistered"}
+
+@app.post("/admin/events/{event_id}/flag/")
+def flag_event(event_id: int, db: Session = Depends(get_db), admin: models.User = Depends(get_current_admin)):
+    event = db.query(models.Event).filter(models.Event.id == event_id).first()
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    event.flag = True
+    db.commit()
+    return {"message": "Event flagged"}
+
+@app.post("/admin/events/{event_id}/unflag/")
+def unflag_event(event_id: int, db: Session = Depends(get_db), admin: models.User = Depends(get_current_admin)):
+    event = db.query(models.Event).filter(models.Event.id == event_id).first()
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    event.flag = False
+    db.commit()
+    return {"message": "Event unflagged"}

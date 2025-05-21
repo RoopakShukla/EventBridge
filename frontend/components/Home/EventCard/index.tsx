@@ -1,8 +1,14 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { eventsService } from "@/lib/axios";
+import { capitalizeWords } from "@/lib/utils";
 import { format, parseISO } from "date-fns";
-import { MapPin } from "lucide-react";
+import { Flag, MapPin } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -39,21 +45,57 @@ const EventCard = ({
     }
   };
 
+  const handleFlag = async (eventId: string, status: boolean) => {
+    try {
+      if (status) {
+        await eventsService.unflagEvent(eventId);
+        toast.success("Event unflagged successfully");
+      } else {
+        await eventsService.flagEvent(eventId);
+        toast.success("Event flagged successfully");
+      }
+      fetchEvents();
+    } catch (error: any) {
+      toast.error("Failed to flag event", { description: error.message });
+    }
+  };
+
   return (
     <div
       key={event.id}
-      className="p-4 border h-fit rounded-md shadow-md bg-white dark:bg-gray-800 hover:cursor-pointer hover:scale-105 transition-all"
+      className="px-3 pt-3 pb-2.5 border h-fit rounded-lg shadow-md bg-white dark:bg-gray-800 hover:cursor-pointer hover:scale-105 transition-all"
       onClick={() => {
         router.push(`/event/${event.id}`);
       }}
     >
       <div className="flex items-center justify-between mb-4 gap-4">
         <Badge className="flex items-center justify-center rounded-sm bg-green-300/10 text-green-500 border-1 border-green-500">
-          {event.category}
+          {capitalizeWords(event.category)}
         </Badge>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          {format(parseISO(event.start_datetime), "LLL dd")}
-        </p>
+        <div className="flex items-center gap-1">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            {format(parseISO(event.start_datetime), "LLL dd")}
+          </p>
+          {isAdmin && (
+            <Tooltip>
+              <TooltipTrigger
+                className="hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer rounded-sm p-1"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleFlag(event.id, event.flag);
+                }}
+              >
+                <Flag
+                  className="w-3.5 h-3.5"
+                  fill={event.flag ? "#fff" : "transparent"}
+                />
+              </TooltipTrigger>
+              <TooltipContent>
+                {event.flag ? "Flagged inappropriate" : "Flag inappropriate"}
+              </TooltipContent>
+            </Tooltip>
+          )}
+        </div>
       </div>
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">

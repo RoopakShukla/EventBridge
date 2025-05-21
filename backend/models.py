@@ -43,6 +43,11 @@ class User(Base):
     events = relationship("Event", secondary=user_events, back_populates="creators")
     registered = relationship("Event", secondary=registered_events, back_populates="attendees")
 
+    def __str__(self):
+        username = self.username
+        email = self.email
+        return f"{username} ({email})"
+
 class Event(Base):
     __tablename__ = "events"
 
@@ -64,6 +69,8 @@ class Event(Base):
     creators = relationship("User", secondary=user_events, back_populates="events")
     attendees = relationship("User", secondary=registered_events, back_populates="registered")
 
+    def __str__(self):
+        return f"{self.name}"
 
 class AuditLog(Base):
     __tablename__ = "audit_logs"
