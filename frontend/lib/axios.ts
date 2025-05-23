@@ -33,7 +33,7 @@ export const authService = {
       await localforage.setItem("token", access_token);
 
       const user = await this.getCurrentUser();
-      await localforage.setItem("user", user);
+      await localforage.setItem("user", JSON.stringify(user));
     } catch (error: any) {
       throw new Error(error.response?.data?.detail || "Login failed");
     }
@@ -70,13 +70,27 @@ export const authService = {
 
   async getStoredUser(): Promise<User | null> {
     if (!isBrowser) return null;
-    return await localforage.getItem<User>("user");
+    const userJson = await localforage.getItem<string>("user");
+    if (!userJson) return null;
+    try {
+      return JSON.parse(userJson) as User;
+    } catch (error) {
+      console.error("Failed to parse stored user data:", error);
+      return null;
+    }
   },
 
   async isAdmin(): Promise<boolean> {
     if (!isBrowser) return false;
-    const user = await localforage.getItem<User>("user");
-    return !!user?.is_admin;
+    const userJson = await localforage.getItem<string>("user");
+    if (!userJson) return false;
+    try {
+      const user = JSON.parse(userJson) as User;
+      return !!user?.is_admin;
+    } catch (error) {
+      console.error("Failed to parse stored user data:", error);
+      return false;
+    }
   },
 };
 
