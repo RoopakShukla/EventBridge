@@ -54,7 +54,7 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       <main className="flex-grow flex p-8 bg-gray-50 dark:bg-gray-900">
         <div className="fixed bottom-4 right-4">
-          <Button variant={"outline"}>
+          <Button variant={"outline"} size={"lg"} className="cursor-pointer">
             <Plus />
             Add Event
           </Button>
