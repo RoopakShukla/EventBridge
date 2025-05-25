@@ -16,11 +16,9 @@ import { toast } from "sonner";
 
 const EventCard = ({
   event,
-  isAdmin,
   fetchEvents,
 }: {
   event: any;
-  isAdmin: Boolean;
   fetchEvents: () => void;
 }) => {
   const router = useRouter();

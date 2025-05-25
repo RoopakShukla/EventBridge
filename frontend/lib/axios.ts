@@ -6,7 +6,6 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const isBrowser = typeof window !== "undefined";
 
-// Initialize localforage
 localforage.config({
   name: "community-pulse",
   storeName: "auth_store",
@@ -141,7 +140,9 @@ export const eventsService = {
       });
       return response.data;
     } catch (error: any) {
-      throw new Error(error.response?.data?.detail || "Failed to create event");
+      throw new Error(
+        error.response?.data?.detail || "Failed to create event"
+      );
     }
   },
 

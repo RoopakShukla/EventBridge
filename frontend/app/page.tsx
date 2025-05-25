@@ -9,6 +9,7 @@ import { MapPin, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import EventCard from "@/components/Home/EventCard";
+import AdminEventCard from "@/components/Home/Admin/EventCard";
 
 export default function Home() {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
@@ -59,30 +60,24 @@ export default function Home() {
             Add Event
           </Button>
         </div>
-        {/* <div className="text-center space-y-4 max-w-md">
-          <h1 className="text-4xl font-bold">Welcome to Community Pulse</h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300">
-            Connect with your community and stay informed about local events and
-            news.
-          </p>
-          <div className="pt-4">
-            <Link
-              href="/register"
-              className="px-6 py-3 bg-brand-green text-white rounded-md hover:bg-opacity-90 transition-all text-lg font-medium"
-            >
-              Get Started
-            </Link>
-          </div>
-        </div> */}
         <div className="flex justify-center max-w-[1280px] w-full mx-auto">
           <div className="grid grid-cols-4 w-full gap-4">
             {data.map((event: any) => (
-              <EventCard
-                key={event.id}
-                event={event}
-                isAdmin={isAdmin}
-                fetchEvents={fetchEvents}
-              />
+              <div key={event.id}>
+                {isAdmin ? (
+                  <AdminEventCard
+                    key={event.id}
+                    event={event}
+                    fetchEvents={fetchEvents}
+                  />
+                ) : (
+                  <EventCard
+                    key={event.id}
+                    event={event}
+                    fetchEvents={fetchEvents}
+                  />
+                )}
+              </div>
             ))}
           </div>
         </div>

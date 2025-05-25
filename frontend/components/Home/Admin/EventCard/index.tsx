@@ -14,13 +14,11 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
 
-const EventCard = ({
+const AdminEventCard = ({
   event,
-  isAdmin,
   fetchEvents,
 }: {
   event: any;
-  isAdmin: Boolean;
   fetchEvents: () => void;
 }) => {
   const router = useRouter();
@@ -63,9 +61,7 @@ const EventCard = ({
   return (
     <div
       key={event.id}
-      className={`px-3 pt-3 pb-2.5 border h-fit rounded-lg shadow-md bg-white dark:bg-gray-800 hover:cursor-pointer ${
-        !isAdmin && "hover:scale-105"
-      } transition-all`}
+      className="px-3 pt-3 pb-2.5 border h-fit rounded-lg shadow-md bg-white dark:bg-gray-800 hover:cursor-pointer"
       onClick={() => {
         router.push(`/event/${event.id}`);
       }}
@@ -78,25 +74,23 @@ const EventCard = ({
           <p className="text-sm text-gray-500 dark:text-gray-400">
             {format(parseISO(event.start_datetime), "LLL dd")}
           </p>
-          {isAdmin && (
-            <Tooltip>
-              <TooltipTrigger
-                className="hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer rounded-sm p-1"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleFlag(event.id, event.flag);
-                }}
-              >
-                <Flag
-                  className="w-3.5 h-3.5"
-                  fill={event.flag ? "#fff" : "transparent"}
-                />
-              </TooltipTrigger>
-              <TooltipContent>
-                {event.flag ? "Flagged inappropriate" : "Flag inappropriate"}
-              </TooltipContent>
-            </Tooltip>
-          )}
+          <Tooltip>
+            <TooltipTrigger
+              className="hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer rounded-sm p-1"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleFlag(event.id, event.flag);
+              }}
+            >
+              <Flag
+                className="w-3.5 h-3.5"
+                fill={event.flag ? "#fff" : "transparent"}
+              />
+            </TooltipTrigger>
+            <TooltipContent>
+              {event.flag ? "Flagged inappropriate" : "Flag inappropriate"}
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
       <div className="flex flex-col gap-4">
@@ -108,60 +102,53 @@ const EventCard = ({
             {event.description}
           </p>
         </div>
-        {isAdmin ? (
-          <div className="flex gap-2">
-            {event.status === "approved" ? (
+        <div className="flex gap-2">
+          {event.status === "approved" ? (
+            <Button
+              className="flex-1 bg-green-500 hover:bg-green-600"
+              size="sm"
+              disabled
+            >
+              Approved
+            </Button>
+          ) : event.status === "rejected" ? (
+            <Button
+              className="flex-1 bg-red-500 hover:bg-red-600"
+              size="sm"
+              disabled
+            >
+              Rejected
+            </Button>
+          ) : (
+            <>
               <Button
-                className="flex-1 bg-green-500 hover:bg-green-600"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleApprove(event.id);
+                }}
+                className="flex-1 bg-green-500 hover:bg-green-600 text-black dark:text-white cursor-pointer"
                 size="sm"
-                disabled
               >
-                Approved
+                Approve
               </Button>
-            ) : event.status === "rejected" ? (
               <Button
-                className="flex-1 bg-red-500 hover:bg-red-600"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleReject(event.id);
+                }}
+                className="flex-1 bg-destructive/90 shadow-xs hover:bg-destructive/60 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60 text-black dark:text-white cursor-pointer"
                 size="sm"
-                disabled
               >
-                Rejected
+                Reject
               </Button>
-            ) : (
-              <>
-                <Button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleApprove(event.id);
-                  }}
-                  className="flex-1 bg-green-500 hover:bg-green-600 text-black dark:text-white cursor-pointer"
-                  size="sm"
-                >
-                  Approve
-                </Button>
-                <Button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleReject(event.id);
-                  }}
-                  className="flex-1 bg-destructive/90 shadow-xs hover:bg-destructive/60 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60 text-black dark:text-white cursor-pointer"
-                  size="sm"
-                >
-                  Reject
-                </Button>
-              </>
-            )}
-          </div>
-        ) : (
-          <p className="flex flex-row gap-1 text-sm text-gray-600 dark:text-gray-300">
-            <MapPin className="w-4" />
-            {event.location}
-          </p>
-        )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
-export default EventCard;
+export default AdminEventCard;

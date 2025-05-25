@@ -60,7 +60,9 @@ export default function EventForm() {
     },
   });
 
-  const onSubmit = (data: EventFormData) => {
+  const onSubmit = async (data: EventFormData) => {
+    const loadingToast = toast.loading("Creating event...");
+
     try {
       const formData = {
         name: data.eventName,
@@ -73,19 +75,19 @@ export default function EventForm() {
         registration_end_datetime: registrationEnd?.toISOString(),
         photos: data.photos ? Array.from(data.photos) : [],
       };
-      console.log("Form Data:", formData);
 
-      const loadingToast = toast.loading("Creating event...");
-
-      eventsService.createEvent(formData);
+      await eventsService.createEvent(formData);
 
       toast.dismiss(loadingToast);
-      toast.success("Event created successfully!");
 
-      router.push("/");
+      toast.success("Event created successfully", {
+        description: "Your event has been created!",
+      });
     } catch (error: any) {
+      toast.dismiss(loadingToast);
+
       toast.error("Failed to create event", {
-        description: error.message || "Please try again later",
+        description: error.message,
       });
     }
   };
